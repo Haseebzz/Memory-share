@@ -16,7 +16,15 @@ router.get('/', async (req, res) => {
     }
   });
 
-  // Create a new memory route
+ // getting all the memories sorted by score
+ router.get('/score', async (req, res) => {
+  try {
+    const memories = await MemoryModel.find().sort({ likeCount: -1 });
+    res.json(memories);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 
 
 
@@ -126,117 +134,143 @@ router.get('/search', async (req, res) => {
   });
 
 
-// Like a memory
-router.put('/:id/like/:userId', async (req, res) => {
-    try {
-      const { id, userId } = req.params;
+
   
-      const memory = await MemoryModel.findById(id);
-  
-      if (!memory) {
-        return res.status(404).json({ error: 'Memory not found' });
-      }
-  
-      // Check if the user has already liked or disliked the memory
-      const userLikedIndex = memory.likes.findIndex(like => like.userId.toString() === userId);
-      const userDislikedIndex = memory.dislikes.findIndex(dislike => dislike.userId.toString() === userId);
-  
-      if (userLikedIndex !== -1) {
-        return res.status(400).json({ error: 'User has already liked the memory' });
-      }
-  
-      // If the user has previously disliked the memory, remove the dislike
-      if (userDislikedIndex !== -1) {
-        memory.dislikes.splice(userDislikedIndex, 1);
-        memory.dislikesCount -= 1;
-      }
-  
-      // Add the like to the memory
-      memory.likes.push({ userId, value: 1 });
-      memory.likesCount += 1;
-  
-      await memory.save();
-  
-      res.json({ message: 'Memory liked successfully' });
-    } catch (error) {
-      res.status(500).json({ error: 'Server error' });
+ // Get memories by user ID route
+router.get('/user/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await UserModel.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
     }
-  });
-  
-  // Dislike a memory
-  router.put('/:id/dislike/:userId', async (req, res) => {
-    try {
-      const { id, userId } = req.params;
-  
-      const memory = await MemoryModel.findById(id);
-  
-      if (!memory) {
-        return res.status(404).json({ error: 'Memory not found' });
-      }
-  
-      // Check if the user has already liked or disliked the memory
-      const userDislikedIndex = memory.dislikes.findIndex(dislike => dislike.userId.toString() === userId);
-      const userLikedIndex = memory.likes.findIndex(like => like.userId.toString() === userId);
-  
-      if (userDislikedIndex !== -1) {
-        return res.status(400).json({ error: 'User has already disliked the memory' });
-      }
-  
-      // If the user has previously liked the memory, remove the like
-      if (userLikedIndex !== -1) {
-        memory.likes.splice(userLikedIndex, 1);
-        memory.likesCount -= 1;
-      }
-  
-      // Add the dislike to the memory
-      memory.dislikes.push({ userId, value: 1 });
-      memory.dislikesCount += 1;
-  
-      await memory.save();
-  
-      res.json({ message: 'Memory disliked successfully' });
-    } catch (error) {
-      res.status(500).json({ error: 'Server error' });
+
+    const memories = await MemoryModel.find({ userOwner: user.username });
+
+    res.json(memories);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+// Like a memory route
+router.post('/:id/like/:userId', async (req, res) => {
+  try {
+    const memoryId = req.params.id;
+    const userId = req.params.userId;
+
+    const memory = await MemoryModel.findById(memoryId);
+
+    if (!memory) {
+      return res.status(404).json({ error: 'Memory not found' });
     }
-  });
-  
-  // Get total likes of a memory
-router.get('/:id/likes', async (req, res) => {
-    try {
-      const memoryId = req.params.id;
-  
-      const memory = await MemoryModel.findById(memoryId);
-  
-      if (!memory) {
-        return res.status(404).json({ error: 'Memory not found' });
+
+    const hasLiked = memory.likes.includes(userId);
+
+    if (!hasLiked) {
+      memory.likes.push(userId);
+      memory.likeCount++;
+      
+      if (memory.dislikes.includes(userId)) {
+        memory.dislikes.pull(userId);
+        memory.dislikeCount--;
       }
-  
-      const totalLikes = memory.totalLikes;
-  
-      res.json({ totalLikes });
-    } catch (error) {
-      res.status(500).json({ error: 'Server error' });
+
+      const updatedMemory = await memory.save();
+      res.json(updatedMemory);
+    } else {
+      res.json(memory); // Memory already liked by the user, no changes needed
     }
-  });
-  
-  // Get total dislikes of a memory
-  router.get('/:id/dislikes', async (req, res) => {
-    try {
-      const memoryId = req.params.id;
-  
-      const memory = await MemoryModel.findById(memoryId);
-  
-      if (!memory) {
-        return res.status(404).json({ error: 'Memory not found' });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Dislike a memory route
+router.post('/:id/dislike/:userId', async (req, res) => {
+  try {
+    const memoryId = req.params.id;
+    const userId = req.params.userId;
+
+    const memory = await MemoryModel.findById(memoryId);
+
+    if (!memory) {
+      return res.status(404).json({ error: 'Memory not found' });
+    }
+
+    const hasDisliked = memory.dislikes.includes(userId);
+
+    if (!hasDisliked) {
+      memory.dislikes.push(userId);
+      memory.dislikeCount++;
+      
+      if (memory.likes.includes(userId)) {
+        memory.likes.pull(userId);
+        memory.likeCount--;
       }
-  
-      const totalDislikes = memory.totalDislikes;
-  
-      res.json({ totalDislikes });
-    } catch (error) {
-      res.status(500).json({ error: 'Server error' });
+
+      const updatedMemory = await memory.save();
+      res.json(updatedMemory);
+    } else {
+      res.json(memory); // Memory already disliked by the user, no changes needed
     }
-  });
-  
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Unlike a memory route
+router.post('/:id/unlike/:userId', async (req, res) => {
+  try {
+    const memoryId = req.params.id;
+    const userId = req.params.userId;
+
+    const memory = await MemoryModel.findById(memoryId);
+
+    if (!memory) {
+      return res.status(404).json({ error: 'Memory not found' });
+    }
+
+    if (memory.likes.includes(userId)) {
+      memory.likes.pull(userId);
+      memory.likeCount--;
+
+      const updatedMemory = await memory.save();
+      res.json(updatedMemory);
+    } else {
+      res.json(memory); // Memory not liked by the user, no changes needed
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Undislike a memory route
+router.post('/:id/undislike/:userId', async (req, res) => {
+  try {
+    const memoryId = req.params.id;
+    const userId = req.params.userId;
+
+    const memory = await MemoryModel.findById(memoryId);
+
+    if (!memory) {
+      return res.status(404).json({ error: 'Memory not found' });
+    }
+
+    if (memory.dislikes.includes(userId)) {
+      memory.dislikes.pull(userId);
+      memory.dislikeCount--;
+
+      const updatedMemory = await memory.save();
+      res.json(updatedMemory);
+    } else {
+      res.json(memory); // Memory not disliked by the user, no changes needed
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 
 export { router as memoryRouter };

@@ -6,6 +6,15 @@ import { UserModel } from "../models/Users.js";
 import { MemoryModel } from "../models/Memory.js";
 const router = express.Router();
 
+// Fetch all comments
+router.get("/", async (req, res) => {
+  try {
+    const comments = await CommentModel.find();
+    res.json(comments);
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
 
 // Create a new comment
 router.post("/:memoryId", async (req, res) => {
@@ -102,118 +111,152 @@ router.put("/:commentId", async (req, res) => {
       res.status(500).json({ error: "Server error" });
     }
   });
-  // Like a comment
-router.put("/:id/like/:userId", async (req, res) => {
-    try {
-      const { id, userId } = req.params;
-  
-      const comment = await CommentModel.findById(id);
-  
-      if (!comment) {
-        return res.status(404).json({ error: "Comment not found" });
-      }
-  
-      // Check if the user has already liked or disliked the comment
-      const userDislikedIndex = comment.dislikes.findIndex(dislike => dislike.userId.toString() === userId);
-      const userLikedIndex = comment.likes.findIndex(like => like.userId.toString() === userId);
-  
-      if (userLikedIndex !== -1) {
-        return res.status(400).json({ error: "User has already liked the comment" });
-      }
-  
-      // If the user has previously disliked the comment, remove the dislike
-      if (userDislikedIndex !== -1) {
-        comment.dislikes.splice(userDislikedIndex, 1);
-        comment.dislikesCount -= 1;
-      }
-  
-      // Add the like to the comment
-      comment.likes.push({ userId, value: 1 });
-      comment.likesCount += 1;
-  
-      await comment.save();
-  
-      res.json({ message: "Comment liked successfully" });
-    } catch (error) {
-      res.status(500).json({ error: "Server error" });
+
+
+ router.post('/:id/like/:userId', async (req, res) => {
+  try {
+    const commentId = req.params.id;
+    const userId = req.params.userId;
+
+    const memory = await MemoryModel.findOne({ 'comments._id': commentId });
+
+    if (!memory) {
+      return res.status(404).json({ error: 'Memory not found' });
     }
-  });
-  
-  // Dislike a comment
-  router.put("/:id/dislike/:userId", async (req, res) => {
-    try {
-      const { id, userId } = req.params;
-  
-      const comment = await CommentModel.findById(id);
-  
-      if (!comment) {
-        return res.status(404).json({ error: "Comment not found" });
-      }
-  
-      // Check if the user has already liked or disliked the comment
-      const userLikedIndex = comment.likes.findIndex(like => like.userId.toString() === userId);
-      const userDislikedIndex = comment.dislikes.findIndex(dislike => dislike.userId.toString() === userId);
-  
-      if (userDislikedIndex !== -1) {
-        return res.status(400).json({ error: "User has already disliked the comment" });
-      }
-  
-      // If the user has previously liked the comment, remove the like
-      if (userLikedIndex !== -1) {
-        comment.likes.splice(userLikedIndex, 1);
-        comment.likesCount -= 1;
-      }
-  
-      // Add the dislike to the comment
-      comment.dislikes.push({ userId, value: 1 });
-      comment.dislikesCount += 1;
-  
-      await comment.save();
-  
-      res.json({ message: "Comment disliked successfully" });
-    } catch (error) {
-      res.status(500).json({ error: "Server error" });
+
+    const comment = memory.comments.find((c) => c._id.toString() === commentId);
+
+    if (!comment) {
+      return res.status(404).json({ error: 'Comment not found' });
     }
-  });
-  
-  // Get total likes of a comment
-router.get("/:id/likes", async (req, res) => {
-    try {
-      const commentId = req.params.id;
-  
-      const comment = await CommentModel.findById(commentId);
-  
-      if (!comment) {
-        return res.status(404).json({ error: "Comment not found" });
+
+    const hasLiked = comment.likes.includes(userId);
+    const hasDisliked = comment.dislikes.includes(userId);
+
+    if (!hasLiked) {
+      comment.likes.push(userId);
+      comment.likeCount++;
+
+      if (hasDisliked) {
+        comment.dislikes.pull(userId);
+        comment.dislikeCount--;
       }
-  
-      const totalLikes = comment.totalLikes; // Access the virtual field 'totalLikes'
-  
-      res.json({ totalLikes });
-    } catch (error) {
-      res.status(500).json({ error: "Server error" });
+    } else {
+      comment.likes.pull(userId);
+      comment.likeCount--;
     }
-  });
-  
-  // Get total dislikes of a comment
-  router.get("/:id/dislikes", async (req, res) => {
-    try {
-      const commentId = req.params.id;
-  
-      const comment = await CommentModel.findById(commentId);
-  
-      if (!comment) {
-        return res.status(404).json({ error: "Comment not found" });
+
+    await memory.save();
+    res.json(memory);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+router.post('/:id/dislike/:userId', async (req, res) => {
+  try {
+    const commentId = req.params.id;
+    const userId = req.params.userId;
+
+    const memory = await MemoryModel.findOne({ 'comments._id': commentId });
+
+    if (!memory) {
+      return res.status(404).json({ error: 'Memory not found' });
+    }
+
+    const comment = memory.comments.find((c) => c._id.toString() === commentId);
+
+    if (!comment) {
+      return res.status(404).json({ error: 'Comment not found' });
+    }
+
+    const hasDisliked = comment.dislikes.includes(userId);
+    const hasLiked = comment.likes.includes(userId);
+
+    if (!hasDisliked) {
+      comment.dislikes.push(userId);
+      comment.dislikeCount++;
+
+      if (hasLiked) {
+        comment.likes.pull(userId);
+        comment.likeCount--;
       }
-  
-      const totalDislikes = comment.totalDislikes; // Access the virtual field 'totalDislikes'
-  
-      res.json({ totalDislikes });
-    } catch (error) {
-      res.status(500).json({ error: "Server error" });
+    } else {
+      comment.dislikes.pull(userId);
+      comment.dislikeCount--;
     }
-  });
+
+    await memory.save();
+    res.json(memory);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+router.post('/:id/unlike/:userId', async (req, res) => {
+  try {
+    const commentId = req.params.id;
+    const userId = req.params.userId;
+
+    const memory = await MemoryModel.findOne({ 'comments._id': commentId });
+
+    if (!memory) {
+      return res.status(404).json({ error: 'Memory not found' });
+    }
+
+    const comment = memory.comments.find((c) => c._id.toString() === commentId);
+
+    if (!comment) {
+      return res.status(404).json({ error: 'Comment not found' });
+    }
+
+    const hasLiked = comment.likes.includes(userId);
+
+    if (hasLiked) {
+      comment.likes.pull(userId);
+      comment.likeCount--;
+    }
+
+    await memory.save();
+    res.json(memory);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+router.post('/:id/undislike/:userId', async (req, res) => {
+  try {
+    const commentId = req.params.id;
+    const userId = req.params.userId;
+
+    const memory = await MemoryModel.findOne({ 'comments._id': commentId });
+
+    if (!memory) {
+      return res.status(404).json({ error: 'Memory not found' });
+    }
+
+    const comment = memory.comments.find((c) => c._id.toString() === commentId);
+
+    if (!comment) {
+      return res.status(404).json({ error: 'Comment not found' });
+    }
+
+    const hasDisliked = comment.dislikes.includes(userId);
+
+    if (hasDisliked) {
+      comment.dislikes.pull(userId);
+      comment.dislikeCount--;
+    }
+
+    await memory.save();
+    res.json(memory);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
   
-  
- 
+
+
+
 export { router as commentRouter };
