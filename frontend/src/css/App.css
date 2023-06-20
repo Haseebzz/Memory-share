@@ -4,6 +4,10 @@
   font-family: 'Playfair Display', 'serif';
 }
 
+body {
+    margin: 0;
+}
+
 .like-button {
     background-color: green;
     color: white;
