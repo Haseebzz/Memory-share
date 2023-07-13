@@ -1,36 +1,36 @@
 .navbar {
   background-color: #15616D;
   padding: 10px;
-
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr;
-  grid-template-areas: "left-section right-section";
+  width: 100%;
 }
 
-.goh {
+.navbar > .row {
+  width: 100%;
+  margin: 0;
+}
+
+.link {
   text-decoration: none;
   color: white;
   transition: 0.25s;
 }
-.goh:hover {
+
+.link:hover {
   transform: scale(0.9);
 }
 
-#left-section {
-  grid-area: left-section;
+#left {
   display: flex; /* Needed for hover to work on the left side for some reason */
 }
 
-#right-section {
-  grid-area: right-section;
-
-  display: grid;
-  grid-template-rows: 1fr;
-}
-#right-section > * {
+#right {
   display: flex;
-  justify-content: center;
+}
+
+#right .row {
+  width: 100%;
+  margin: 0;
+  text-align: center;
   align-items: center;
 }
 
@@ -39,31 +39,6 @@
   font-size: 1.5em;
 }
 
-#about {
-  grid-area: about;
-}
-
-#register {
-  grid-area: register;
-}
-
-#login {
-  grid-area: login;
-}
-
-#profile {
-  grid-area: profile;
-}
-
-#create {
-  grid-area: create;
-}
-
-#memories {
-  grid-area: memories;
-}
-
 #logout {
-  grid-area: logout;
   background-color: black;
 }

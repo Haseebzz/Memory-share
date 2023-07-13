@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
 import "../css/Navbar.css";
@@ -15,40 +15,31 @@ const Navbar = () => {
 
   }
 
-  useEffect(() => {
-    const navRight = document.getElementById("right-section");
-
-    if (!cookies.access_token) {
-      navRight.style.gridTemplateColumns = "1fr 1fr 1fr";
-      navRight.style.gridTemplateAreas = '"about register login"';
-    } else {
-      navRight.style.gridTemplateColumns = "1fr 1fr 1fr 1fr 1fr";
-      navRight.style.gridTemplateAreas = '"about profile create memories logout"';
-    }
-
-  });
-
   return (
     <div className="navbar">
-      <div id="left-section">
-        <Link to="/" id="home" className="goh">Memory Share</Link>
-      </div>
-      <div id='right-section'>
-        <Link to="/about" id="about" className="goh">About</Link>
-        {!cookies.access_token && (
-          <>
-            <Link to="/register" id="register" className="goh">Register</Link>
-            <Link to="/login" id="login" className="goh">Login</Link>
-          </>
-        )}
-        {cookies.access_token && (
-          <>
-            <Link to="/profile" id="profile" className="goh">Profile</Link>
-            <Link to="/create" id="create" className="goh">Create</Link>
-            <Link to="/usermemory" id="memories" className="goh">MyMemory</Link>
-            <button onClick={logout} id="logout" className="goh">Logout</button>
-          </>
-        )}
+      <div className="row">
+        <div className="col-6" id="left">
+          <Link to="/" id="home" className="link">Memory Share</Link>
+        </div>
+        <div className="col-6" id="right">
+          <div className="row">
+            <Link to="/about" id="about" className="link col">About</Link>
+            {!cookies.access_token && (
+              <>
+                <Link to="/register" id="register" className="link col">Register</Link>
+                <Link to="/login" id="login" className="link col">Login</Link>
+              </>
+            )}
+            {cookies.access_token && (
+              <>
+                <Link to="/profile" id="profile" className="link col">Profile</Link>
+                <Link to="/create" id="create" className="link col">Create</Link>
+                <Link to="/usermemory" id="memories" className="link col">My Memories</Link>
+                <button onClick={logout} id="logout" className="link col">Logout</button>
+              </>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
