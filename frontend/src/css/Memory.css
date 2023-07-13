@@ -1,0 +1,42 @@
+.memory-cont {
+    border: solid 1px gray;
+    width: calc(100% / 3);
+    display: inline-block;
+    text-align: center;
+}
+
+.memory-cont > img {
+    height: 15vh;
+}
+
+.memory-cont > * {
+    display: block;
+    margin: auto;
+}
+
+.memory-title {
+    font-weight: bold;
+}
+
+.memory-divider {
+    width: 50%;
+    margin: 0.5rem auto 0.5rem auto;
+}
+
+.like-button {
+    background-color: green;
+}
+
+.dislike-button {
+    background-color: red;
+}
+
+.like-button, .dislike-button {
+    color: white;
+    display: inline-block;
+    transition: 0.25s;
+}
+
+.like-button:hover, .dislike-button:hover {
+    transform: scale(0.9);
+}

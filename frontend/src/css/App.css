@@ -8,16 +8,4 @@ body {
     margin: 0;
 }
 
-.like-button {
-    background-color: green;
-    color: white;
-    margin-right: 5px;
-  }
-  
-  .dislike-button {
-    background-color: red;
-    color: white;
-    /* Add any other styles you want for the Dislike button */
-  }
-
   

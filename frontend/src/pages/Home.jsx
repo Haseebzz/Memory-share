@@ -1,25 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import Memory from "../components/Memory";
 
 const Home = () => {
   const [memories, setMemories] = useState([]);
-  const[comments,setComments] = useState([])
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortedByLikes, setSortedByLikes] = useState(false);
   const [newComment, setNewComment] = useState('');
   const [editCommentId, setEditCommentId] = useState('');
   const [editCommentText, setEditCommentText] = useState('');
-  const [sortedByLikes, setSortedByLikes] = useState(false);
+  const [comments, setComments] = useState([]);
   const userId = window.localStorage.userID;
   const username = window.localStorage.username;
-  
+
   const fetchMemories = async () => {
     try {
       let url = 'http://localhost:4000/memory';
-  
+
       if (sortedByLikes) {
         url = 'http://localhost:4000/memory/score';
       }
-     
+
       const response = await axios.get(url);
       const fetchedMemories = response.data;
       setMemories(fetchedMemories);
@@ -27,26 +28,26 @@ const Home = () => {
       console.error('Error fetching memories:', error);
     }
   };
- const fetchComments = async () => {
-  try{
-    const response = await axios.get('http://localhost:4000/comment');
-    const fetchedComments = response.data;
-    console.log(fetchedComments)
-    setComments(fetchedComments);
-  } catch(error) {
-    console.error('Error', error)
+  const fetchComments = async () => {
+    try {
+      const response = await axios.get('http://localhost:4000/comment');
+      const fetchedComments = response.data;
+      console.log(fetchedComments)
+      setComments(fetchedComments);
+    } catch (error) {
+      console.error('Error', error)
+    }
   }
- }
- const sortMemoriesByLikes = async () => {
-  try {
-    const response = await axios.get('http://localhost:4000/memory/score');
-    const sortedMemories = response.data.sort((a, b) => b.likes.length - a.likes.length);
-    setMemories(sortedMemories);
-    setSortedByLikes(true);
-  } catch (error) {
-    console.error('Error sorting memories by likes:', error);
-  }
-};
+  const sortMemoriesByLikes = async () => {
+    try {
+      const response = await axios.get('http://localhost:4000/memory/score');
+      const sortedMemories = response.data.sort((a, b) => b.likes.length - a.likes.length);
+      setMemories(sortedMemories);
+      setSortedByLikes(true);
+    } catch (error) {
+      console.error('Error sorting memories by likes:', error);
+    }
+  };
 
   useEffect(() => {
     fetchMemories();
@@ -64,34 +65,10 @@ const Home = () => {
     }
   };
 
-  const handleToggleLike = async (memoryId) => {
-    try {
-      const memory = memories.find((memory) => memory._id === memoryId);
-      if (memory.likes.includes(userId)) {
-        await axios.post(`http://localhost:4000/memory/${memoryId}/unlike/${userId}`);
-      } else {
-        await axios.post(`http://localhost:4000/memory/${memoryId}/like/${userId}`);
-      }
-      fetchMemories();
-    } catch (error) {
-      console.error('Error toggling like:', error);
-    }
+  const handleInputChange = (e) => {
+    setSearchQuery(e.target.value);
   };
 
-  const handleToggleDislike = async (memoryId) => {
-    try {
-      const memory = memories.find((memory) => memory._id === memoryId);
-      if (memory.dislikes.includes(userId)) {
-        await axios.post(`http://localhost:4000/memory/${memoryId}/undislike/${userId}`);
-      } else {
-        await axios.post(`http://localhost:4000/memory/${memoryId}/dislike/${userId}`);
-      }
-      fetchMemories();
-    } catch (error) {
-      console.error('Error toggling dislike:', error);
-    }
-  };
- 
   const handleCommentToggleLike = async (commentId) => {
     try {
       const comment = comments.find((c) => c._id === commentId);
@@ -105,7 +82,7 @@ const Home = () => {
       console.error('Error toggling like:', error);
     }
   };
-  
+
   const handleCommentToggleDislike = async (commentId) => {
     try {
       const comment = comments.find((c) => c._id === commentId);
@@ -119,8 +96,6 @@ const Home = () => {
       console.error('Error toggling dislike:', error);
     }
   };
-  
-  
 
   const handleCommentSubmit = async (memoryId) => {
     try {
@@ -164,10 +139,6 @@ const Home = () => {
     }
   };
 
-  const handleInputChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
-
   const handleCommentChange = (e) => {
     if (editCommentId) {
       setEditCommentText(e.target.value);
@@ -177,95 +148,21 @@ const Home = () => {
   };
 
   return (
-    <div>
+    <div className="container">
       <h2>Memories</h2>
       <div>
         <input type="text" value={searchQuery} onChange={handleInputChange} placeholder="Search by title" />
         <button onClick={handleSearch}>Search</button>
         <button onClick={sortMemoriesByLikes}>Sort by likes</button>
-        <button onClick={()=>window.location.reload()}>Sort by original</button>
+        <button onClick={() => window.location.reload()}>Sort by original</button>
       </div>
-      {memories.map((memory) => (
-        <div key={memory._id}>
-          <p>{memory._id}</p>
-          <h3>{memory.title}</h3>
-          <img src={memory.imageUrl} alt={memory.title} />
-          <p>Owner: {memory.userOwner}</p>
-          <p>Description: {memory.description}</p>
-          <p>Created: {new Date(memory.createdAt).toLocaleDateString('en-US')}</p>
-          {userId && (
-            <>
-              <button onClick={() => handleToggleLike(memory._id)}>
-                {memory.likes.includes(userId) ? 'Unlike' : 'Like'}
-              </button>
-              <button onClick={() => handleToggleDislike(memory._id)}>
-                {memory.dislikes.includes(userId) ? 'Undislike' : 'Dislike'}
-              </button>
-            </>
-          )}
-          <p>Total Likes: {memory.likes.length}</p>
-          <p>Total Dislikes: {memory.dislikes.length}</p>
-          <h1>Comments</h1>
-          {memory.comments.length > 0 ? (
-            <ul>
-              {memory.comments.map((comment) => (
-                <li key={comment._id}>
-                  {editCommentId === comment._id ? (
-                    <form onSubmit={(e) => handleCommentUpdate(e, comment._id)}>
-                      <input
-                        type="text"
-                        value={editCommentText}
-                        onChange={handleCommentChange}
-                        placeholder="Edit comment"
-                      />
-                      <button type="submit">Update</button>
-                      <button onClick={() => setEditCommentId('')}>Cancel</button>
-                    </form>
-                  ) : (
-                    <>
-                      <p>Username: {comment.username}</p>
-                      <p>Comment: {comment.comment}</p>
-                      <p>Likes {comment.likes.length}</p>
-            <p>Dislikes: {comment.dislikes.length}</p> 
-                      {username === comment.username && (
-                        <>
-                          <button onClick={() => setEditCommentId(comment._id)}>Edit</button>
-                          <button onClick={() => handleDeleteComment(comment._id)}>Delete</button>
-                        </>
-                      )}
-                      {userId && (
-                        <>
-                          <button onClick={() => handleCommentToggleLike(comment._id)}>
-      {comment.likes.includes(userId) ? 'Unlike' : 'Like'}
-    </button>
-    <button onClick={() => handleCommentToggleDislike(comment._id)}>
-      {comment.dislikes.includes(userId) ? 'Undislike' : 'Dislike'}
-    </button>
-                        </>
-                      )}
-                      
-                    </>
-                  )}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>No comments.</p>
-          )}
-          {userId && (
-            <div>
-              <input
-                type="text"
-                value={newComment}
-                onChange={handleCommentChange}
-                placeholder="Add a comment"
-              />
-              <button onClick={() => handleCommentSubmit(memory._id)}>Add Comment</button>
-            </div>
-          )}
-        </div>
+      {memories.map((m) => (
+        <Memory
+          key={m._id}
+          memory={m}
+          memoryData={memories}
+        />
       ))}
-      
     </div>
   );
 };
