@@ -1,17 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Memory from "../components/Memory";
+import "../css/Home.css";
 
 const Home = () => {
   const [memories, setMemories] = useState([]);
+  const [comments, setComments] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortedByLikes, setSortedByLikes] = useState(false);
-  const [newComment, setNewComment] = useState('');
-  const [editCommentId, setEditCommentId] = useState('');
-  const [editCommentText, setEditCommentText] = useState('');
-  const [comments, setComments] = useState([]);
-  const userId = window.localStorage.userID;
-  const username = window.localStorage.username;
 
   const fetchMemories = async () => {
     try {
@@ -69,84 +65,6 @@ const Home = () => {
     setSearchQuery(e.target.value);
   };
 
-  const handleCommentToggleLike = async (commentId) => {
-    try {
-      const comment = comments.find((c) => c._id === commentId);
-      if (comment.likes.includes(userId)) {
-        await axios.post(`http://localhost:4000/comment/${commentId}/unlike/${userId}`);
-      } else {
-        await axios.post(`http://localhost:4000/comment/${commentId}/like/${userId}`);
-      }
-      fetchMemories()
-    } catch (error) {
-      console.error('Error toggling like:', error);
-    }
-  };
-
-  const handleCommentToggleDislike = async (commentId) => {
-    try {
-      const comment = comments.find((c) => c._id === commentId);
-      if (comment.dislikes.includes(userId)) {
-        await axios.post(`http://localhost:4000/comment/${commentId}/undislike/${userId}`);
-      } else {
-        await axios.post(`http://localhost:4000/comment/${commentId}/dislike/${userId}`);
-      }
-      fetchMemories();
-    } catch (error) {
-      console.error('Error toggling dislike:', error);
-    }
-  };
-
-  const handleCommentSubmit = async (memoryId) => {
-    try {
-      const response = await axios.post(`http://localhost:4000/comment/${memoryId}`, {
-        username: username,
-        comment: newComment,
-      });
-      const createdComment = response.data;
-      console.log('New comment:', createdComment);
-      setNewComment('');
-      window.location.reload()
-      fetchMemories();
-    } catch (error) {
-      console.error('Error submitting comment:', error);
-    }
-  };
-
-  const handleDeleteComment = async (commentId) => {
-    try {
-      await axios.delete(`http://localhost:4000/comment/${commentId}`);
-      fetchMemories();
-    } catch (error) {
-      console.error('Error deleting comment:', error);
-    }
-  };
-
-  const handleCommentUpdate = async (e, commentId) => {
-    e.preventDefault();
-    try {
-      const response = await axios.put(`http://localhost:4000/comment/${commentId}`, {
-        username: username,
-        comment: editCommentText,
-      });
-      const updatedComment = response.data;
-      console.log('Updated comment:', updatedComment);
-      setEditCommentId('');
-      setEditCommentText('');
-      fetchMemories();
-    } catch (error) {
-      console.error('Error updating comment:', error);
-    }
-  };
-
-  const handleCommentChange = (e) => {
-    if (editCommentId) {
-      setEditCommentText(e.target.value);
-    } else {
-      setNewComment(e.target.value);
-    }
-  };
-
   return (
     <div className="container">
       <h2>Memories</h2>
@@ -161,6 +79,7 @@ const Home = () => {
           key={m._id}
           memory={m}
           memoryData={memories}
+          commentData={comments}
         />
       ))}
     </div>

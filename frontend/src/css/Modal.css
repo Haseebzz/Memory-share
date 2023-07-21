@@ -1,0 +1,32 @@
+#memory-modal {
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Put below all other elements */
+    left: 0;
+    top: 0;
+    width: 100vw; /* Full width */
+    height: 100vh; /* Full height */
+    overflow: hidden; /* Enable scroll if needed */ 
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+#memory-modal-content {
+    background-color: white;
+    margin: 15vh auto; /* 15% from the top and centered */
+    width: 80vw; /* Could be more or less, depending on screen size */
+    height: 70vh;
+    overflow: hidden;
+}
+
+#memory-modal-content .col-4 {
+    height: 100%;
+}
+
+#memory-modal-content img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+#comments {
+    overflow: auto;
+}

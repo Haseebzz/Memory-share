@@ -1,10 +1,11 @@
 import "../css/Memory.css";
 import { useState } from "react";
 import axios from 'axios';
+import Modal from "./Modal";
 
-export default function Memory({ memory, memoryData }) {
-  const username = window.localStorage.username;
+export default function Memory({ memory, memoryData, commentData }) {
   const userId = window.localStorage.userID;
+  const [showModal, setShowModal] = useState(false);
 
   const handleToggleLike = async (memoryId) => {
     console.log("Function called!");
@@ -35,28 +36,51 @@ export default function Memory({ memory, memoryData }) {
     }
   };
 
+  const openModal = () => {
+    document.querySelector("body").style.overflow = "hidden";
+    setShowModal(true)
+  };
+
   return (
-    <div className="memory-cont">
-      <img src={memory.imageUrl} alt={memory.title} />
-      <p className="memory-title">{memory.title}</p>
-      <p className="memory-desc">{memory.description}</p>
-      <hr className="memory-divider" />
-      <p className="memory-owner">Created by {memory.userOwner}</p>
-      <p className="memory-date">Created on {new Date(memory.createdAt).toLocaleDateString('en-US')}</p>
-      {userId && (
-        <>
-          <hr className="memory-divider" />
-          <button className="like-button" onClick={() => handleToggleLike(memory._id)}>
-            {memory.likes.includes(userId) ? 'Unlike' : 'Like'}
-          </button>
-          <button className="dislike-button" onClick={() => handleToggleDislike(memory._id)}>
-            {memory.dislikes.includes(userId) ? 'Undislike' : 'Dislike'}
-          </button>
-        </>
+    <>
+      {showModal && (
+        <Modal
+          memory={memory}
+          comments={commentData}
+          setShowModal={setShowModal}
+          userId={userId}
+          handleToggleLike={handleToggleLike}
+          handleToggleDislike={handleToggleDislike}
+        />
       )}
-      <p className="like-count">Likes: {memory.likes.length}</p>
-      <p className="dislike-count">Dislikes: {memory.dislikes.length}</p>
-      {/* <h1>Comments</h1>
+      <div className="memory-cont">
+        <img src={memory.imageUrl} alt={memory.title} />
+        <p className="memory-title">{memory.title}</p>
+        <p className="memory-desc">{memory.description}</p>
+        <hr className="memory-divider" />
+        <p className="memory-owner">Created by {memory.userOwner}</p>
+        <p className="memory-date">Created on {new Date(memory.createdAt).toLocaleDateString('en-US')}</p>
+        {userId && (
+          <>
+            <hr className="memory-divider" />
+            <button className="like-button" onClick={() => handleToggleLike(memory._id)}>
+              {memory.likes.includes(userId) ? 'Unlike' : 'Like'}
+            </button>
+            <button className="dislike-button" onClick={() => handleToggleDislike(memory._id)}>
+              {memory.dislikes.includes(userId) ? 'Undislike' : 'Dislike'}
+            </button>
+          </>
+        )}
+        <p className="like-count">Likes: {memory.likes.length}</p>
+        <p className="dislike-count">Dislikes: {memory.dislikes.length}</p>
+        <button onClick={openModal}>View More</button>
+      </div>
+    </>
+  );
+}
+
+/* 
+<h1>Comments</h1>
       {memory.comments.length > 0 ? (
         <ul>
           {memory.comments.map((comment) => (
@@ -112,7 +136,5 @@ export default function Memory({ memory, memoryData }) {
           />
           <button onClick={() => handleCommentSubmit(memory._id)}>Add Comment</button>
         </div>
-      )} */}
-    </div>
-  );
-}
+      )} 
+      */
