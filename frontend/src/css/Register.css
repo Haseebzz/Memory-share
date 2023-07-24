@@ -1,0 +1,37 @@
+.Body {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 93.5vh;
+  background-image: linear-gradient(to bottom, #3e8ca7, #b5eaea);
+}
+
+.TextBoxes {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.Box {
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+}
+button.registerButton {
+  margin-top: 20px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background-color: #007bff;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+button:hover {
+  background-color: #07d61f;
+}
+
+button:active {
+  background-color: #003b80;
+}
