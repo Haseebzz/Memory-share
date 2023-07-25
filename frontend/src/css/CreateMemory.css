@@ -3,15 +3,14 @@
     display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* Adjust the height based on your requirements */
-  /* background: linear-gradient(135deg, #37517e, #83a5d7); */
+  height: 100vh; 
 }
 .body
 {
     display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: rgba(0, 0, 24, 0.7); /* Transparent box background */
+  background-color: rgba(0, 0, 24, 0.7); 
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -21,8 +20,7 @@
 .imgUrlBox,
 .desBox,
 .subBtn {
-  margin-bottom: 15px; /* Add some vertical gap between the elements */
-  /* Additional styles for the form elements */
+  margin-bottom: 15px; 
 }
 
 .ttle 
@@ -52,8 +50,8 @@
 button
 {
     background-color: transparent;
-  border: 2px solid transparent; /* Add a border to make the button visible */
-  color: #ffffff; /* Text color */
+  border: 2px solid transparent; 
+  color: #ffffff; 
   padding: 10px 20px;
   font-size: 16px;
   cursor: pointer;
@@ -64,7 +62,7 @@ button
 
 button:hover
 {
-    background-color: #4e7ac7; /* Nice shade of blue on hover */
+    background-color: #4e7ac7; 
   border-color: #4e7ac7;
   
 }
