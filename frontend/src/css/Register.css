@@ -28,10 +28,10 @@ button.registerButton {
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
-button:hover {
+button.registerButton:hover {
   background-color: #07d61f;
 }
 
-button:active {
+button.registerButton:active {
   background-color: #003b80;
 }
