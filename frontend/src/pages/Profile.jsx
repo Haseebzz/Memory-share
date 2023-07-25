@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate} from 'react-router-dom';
+import '../css/Profile.css';
 
 const Profile = () => {
   const [username, setUsername] = useState('');
@@ -25,9 +26,9 @@ const Profile = () => {
   return (
     <>
     
-        <h2>Profile</h2>
-        <h1>welcome {user}</h1>
-        <h1>Update Information</h1>
+        <h1>Profile</h1>
+        <h2>Welcome {user}!</h2>
+        <h3>Update Information</h3>
         <form onSubmit={handleSubmit}>
             <label htmlFor="username" >
               Username:

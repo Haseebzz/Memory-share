@@ -1,0 +1,39 @@
+h1 {
+    color:lawngreen !important;
+    text-align: center;
+    font-size: 50px !important;   
+}
+
+h2 {
+    color:lawngreen !important;
+    text-align: center;
+    font-size: 100px !important;
+}
+
+h3 {
+    color:lawngreen !important;
+    text-align: center;
+    font-size: 50px !important;
+}
+
+form {
+    color:lawngreen !important;
+    font-size: 15px !important;
+    text-align: center;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-image: url("../../public/newimage.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover; 
+    font-family: Arial, sans-serif;
+}
+
+  
