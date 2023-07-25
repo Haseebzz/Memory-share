@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import "../css/CreateMemory.css";
 
 const CreateMemory = () => {
   const [title, setTitle] = useState('');
@@ -38,24 +39,29 @@ const CreateMemory = () => {
   };
 
   return (
-    <div>
+    <div className="container">
+    <div className="body">
+      <div className="title">
       <h2>Create Memory</h2>
+      </div>
       <form onSubmit={handleSubmit}>
-        <div>
-          <label>Title:</label>
-          <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
+        <div className="titleBox">
+          <label className="ttle">Title:</label>
+          <input className="ttle1" type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
         </div>
-        <div>
-          <label>Image URL:</label>
-          <input type="text" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
+        <div className="imgUrlBox">
+          <label className="url">Image URL:</label>
+          <input className="url1" type="text" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
         </div>
         
-        <div>
-          <label>Description:</label>
-          <textarea value={description} onChange={(e) => setDescription(e.target.value)} />
+        <div className="desBox">
+          <label className='des'>Description:</label>
+          <textarea className='des1' value={description} onChange={(e) => setDescription(e.target.value)} />
         </div>
+        
         <button type="submit">Create</button>
       </form>
+    </div>
     </div>
   );
 };

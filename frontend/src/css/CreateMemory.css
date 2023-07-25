@@ -1,0 +1,70 @@
+.container
+{
+    display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Adjust the height based on your requirements */
+  /* background: linear-gradient(135deg, #37517e, #83a5d7); */
+}
+.body
+{
+    display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: rgba(0, 0, 24, 0.7); /* Transparent box background */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.titleBox,
+.imgUrlBox,
+.desBox,
+.subBtn {
+  margin-bottom: 15px; /* Add some vertical gap between the elements */
+  /* Additional styles for the form elements */
+}
+
+.ttle 
+{
+    margin-right:45px;
+}
+.ttle1
+{
+    margin-right:5px;
+}
+.url 
+{
+    margin-right:29px;
+}
+.url1
+{
+    margin-right: 31.5px;
+}
+.des 
+{
+    margin-right:20px;
+}
+.des1 
+{
+    margin-right:30px;
+}
+button
+{
+    background-color: transparent;
+  border: 2px solid transparent; /* Add a border to make the button visible */
+  color: #ffffff; /* Text color */
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  border-radius: 20px;
+}
+
+button:hover
+{
+    background-color: #4e7ac7; /* Nice shade of blue on hover */
+  border-color: #4e7ac7;
+  
+}
