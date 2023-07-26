@@ -3,6 +3,7 @@
     width: calc(100% / 3);
     display: inline-block;
     text-align: center;
+    
 }
 
 .memory-cont > img {

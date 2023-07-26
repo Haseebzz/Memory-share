@@ -53,88 +53,29 @@ export default function Memory({ memory, memoryData, commentData }) {
           handleToggleDislike={handleToggleDislike}
         />
       )}
-      <div className="memory-cont">
-        <img src={memory.imageUrl} alt={memory.title} />
-        <p className="memory-title">{memory.title}</p>
-        <p className="memory-desc">{memory.description}</p>
-        <hr className="memory-divider" />
-        <p className="memory-owner">Created by {memory.userOwner}</p>
-        <p className="memory-date">Created on {new Date(memory.createdAt).toLocaleDateString('en-US')}</p>
+      <div className="memory-cont p-2">
+        <img src={memory.imageUrl} alt={memory.title} className="rounded-lg shadow-md  mt-2" />
+        <p className="memory-title text-3xl text-blue-600 mt-3 max-w-full whitespace-pre-line overflow-hidden">Title: {memory.title}</p>
+        <p className="memory-desc text-3xl text-blue-600 mt-3 max-w-full whitespace-normal overflow-hidden">Description: {memory.description}</p>
+        <hr className="memory-divider text-3xl text-blue-600 w-50 h-2 bg-white mt-3" />
+        <p className="memory-owner text-3xl text-blue-600 mt-3 max-w-full whitespace-pre-line overflow-hidden">Created by {memory.userOwner}</p>
+        <p className="memory-date text-3xl text-blue-600 mt-3 max-w-full whitespace-pre-line overflow-hidden">Created on {new Date(memory.createdAt).toLocaleDateString('en-US')}</p>
         {userId && (
           <>
             <hr className="memory-divider" />
-            <button className="like-button" onClick={() => handleToggleLike(memory._id)}>
+            <button className="like-button mr-5 text-4xl" onClick={() => handleToggleLike(memory._id)}>
               {memory.likes.includes(userId) ? 'Unlike' : 'Like'}
             </button>
-            <button className="dislike-button" onClick={() => handleToggleDislike(memory._id)}>
+            <button className="dislike-button mr-5 text-4xl" onClick={() => handleToggleDislike(memory._id)}>
               {memory.dislikes.includes(userId) ? 'Undislike' : 'Dislike'}
             </button>
           </>
         )}
-        <p className="like-count">Likes: {memory.likes.length}</p>
-        <p className="dislike-count">Dislikes: {memory.dislikes.length}</p>
-        <button onClick={openModal}>View More</button>
+        <p className="like-count text-3xl text-green-600 mt-3 ">Likes: {memory.likes.length}</p>
+        <p className="dislike-count text-3xl text-red-600 mt-3">Dislikes: {memory.dislikes.length}</p>
+        <button className="text-3xl text-blue-600 mt-3" onClick={openModal}>View More</button>
       </div>
     </>
   );
 }
 
-/* 
-<h1>Comments</h1>
-      {memory.comments.length > 0 ? (
-        <ul>
-          {memory.comments.map((comment) => (
-            <li key={comment._id}>
-              {editCommentId === comment._id ? (
-                <form onSubmit={(e) => handleCommentUpdate(e, comment._id)}>
-                  <input
-                    type="text"
-                    value={editCommentText}
-                    onChange={handleCommentChange}
-                    placeholder="Edit comment"
-                  />
-                  <button type="submit">Update</button>
-                  <button onClick={() => setEditCommentId('')}>Cancel</button>
-                </form>
-              ) : (
-                <>
-                  <p>Username: {comment.username}</p>
-                  <p>Comment: {comment.comment}</p>
-                  <p>Likes {comment.likes.length}</p>
-                  <p>Dislikes: {comment.dislikes.length}</p>
-                  {username === comment.username && (
-                    <>
-                      <button onClick={() => setEditCommentId(comment._id)}>Edit</button>
-                      <button onClick={() => handleDeleteComment(comment._id)}>Delete</button>
-                    </>
-                  )}
-                  {userId && (
-                    <>
-                      <button onClick={() => handleCommentToggleLike(comment._id)}>
-                        {comment.likes.includes(userId) ? 'Unlike' : 'Like'}
-                      </button>
-                      <button onClick={() => handleCommentToggleDislike(comment._id)}>
-                        {comment.dislikes.includes(userId) ? 'Undislike' : 'Dislike'}
-                      </button>
-                    </>
-                  )}
-                </>
-              )}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No comments.</p>
-      )}
-      {userId && (
-        <div>
-          <input
-            type="text"
-            value={newComment}
-            onChange={handleCommentChange}
-            placeholder="Add a comment"
-          />
-          <button onClick={() => handleCommentSubmit(memory._id)}>Add Comment</button>
-        </div>
-      )} 
-      */

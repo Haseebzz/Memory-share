@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Memory from "../components/Memory";
-import "../css/Home.css";
+import newimage from "../newimage.jpg"
 
 const Home = () => {
   const [memories, setMemories] = useState([]);
@@ -66,13 +66,13 @@ const Home = () => {
   };
 
   return (
-    <div className="container">
-      <h2>Memories</h2>
-      <div>
-        <input type="text" value={searchQuery} onChange={handleInputChange} placeholder="Search by title" />
-        <button onClick={handleSearch}>Search</button>
-        <button onClick={sortMemoriesByLikes}>Sort by likes</button>
-        <button onClick={() => window.location.reload()}>Sort by original</button>
+    <div className={`bg-cover bg-center bg-no-repeat min-h-screen relative`} style={{ backgroundImage: `url(${newimage})` }}>
+      <h2 className=''>Memories</h2>
+      <div className=' flex flex-col md:flex-row justify-center items-center m-5'>
+        <input type="text" className=' text-3xl rounded mr-2 ' value={searchQuery} onChange={handleInputChange} placeholder="Search by title" />
+        <button className=' text-4xl mr-2 text-blue-500' onClick={handleSearch}>Search</button>
+        <button className='text-4xl mr-2 text-red-500 mr-2' onClick={sortMemoriesByLikes}>Sort by likes</button>
+        <button className='text-4xl mr-2 text-orange-500' onClick={() => window.location.reload()}>Sort by original</button>
       </div>
       {memories.map((m) => (
         <Memory

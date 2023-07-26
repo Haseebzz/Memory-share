@@ -16,14 +16,14 @@ const Navbar = () => {
   }
 
   return (
-    <div className="navbar">
-      <div className="row">
+    <div className="navbar  ">
+      <div className="row ">
         <div className="col-6" id="left">
           <Link to="/" id="home" className="link">Memory Share</Link>
         </div>
         <div className="col-6" id="right">
           <div className="row">
-            <Link to="/about" id="about" className="link col">About</Link>
+      
             {!cookies.access_token && (
               <>
                 <Link to="/register" id="register" className="link col">Register</Link>

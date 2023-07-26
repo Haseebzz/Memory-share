@@ -18,7 +18,8 @@ const Register = () => {
       alert('Registeration Completed! Now Login');
       navigate('/login');
     } catch (error) {
-      console.log(error);
+      alert(error.response.data.message);
+
     }
   };
 
@@ -29,13 +30,15 @@ const Register = () => {
           <div className="TextBoxes">
             <label htmlFor="username">Username:</label>
             <input
+            className=' mt-3'
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Enter your username"
             />
-            <label htmlFor="password">Password:</label>
+            <label htmlFor="password" className='mt-2'>Password:</label>
             <input
+            className=' mt-3'
               id="password"
               type="password"
               value={password}
