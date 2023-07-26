@@ -57,7 +57,7 @@ const UserMemory = () => {
 
   const handleSearch = async () => {
     try {
-      const response = await axios.get(`http://localhost:4000/memory/search?q=${searchQuery}`);
+      const response = await axios.get(`http://localhost:4000/memory/search/${userId}?q=${searchQuery}`);
       setUserMemories(response.data);
     } catch (error) {
       console.error('Error searching memories:', error);
