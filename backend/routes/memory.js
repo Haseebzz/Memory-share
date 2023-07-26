@@ -133,7 +133,28 @@ router.get('/search', async (req, res) => {
     }
   });
 
-
+  router.get('/search/:userId', async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const { q: searchQuery } = req.query; 
+  
+      const user = await UserModel.findById(userId);
+  
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+  
+      
+      const memories = await MemoryModel.find({
+        userOwner: user.username,
+        title: { $regex: searchQuery, $options: 'i' }, 
+      });
+  
+      res.json(memories);
+    } catch (error) {
+      res.status(500).json({ error: 'Server error' });
+    }
+  });
 
   
  // Get memories by user ID route
@@ -180,14 +201,14 @@ router.post('/:id/like/:userId', async (req, res) => {
       const updatedMemory = await memory.save();
       res.json(updatedMemory);
     } else {
-      res.json(memory); // Memory already liked by the user, no changes needed
+      res.json(memory); 
     }
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
   }
 });
 
-// Dislike a memory route
+
 router.post('/:id/dislike/:userId', async (req, res) => {
   try {
     const memoryId = req.params.id;
@@ -213,14 +234,14 @@ router.post('/:id/dislike/:userId', async (req, res) => {
       const updatedMemory = await memory.save();
       res.json(updatedMemory);
     } else {
-      res.json(memory); // Memory already disliked by the user, no changes needed
+      res.json(memory); 
     }
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
   }
 });
 
-// Unlike a memory route
+
 router.post('/:id/unlike/:userId', async (req, res) => {
   try {
     const memoryId = req.params.id;
@@ -239,7 +260,7 @@ router.post('/:id/unlike/:userId', async (req, res) => {
       const updatedMemory = await memory.save();
       res.json(updatedMemory);
     } else {
-      res.json(memory); // Memory not liked by the user, no changes needed
+      res.json(memory); 
     }
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
@@ -265,7 +286,7 @@ router.post('/:id/undislike/:userId', async (req, res) => {
       const updatedMemory = await memory.save();
       res.json(updatedMemory);
     } else {
-      res.json(memory); // Memory not disliked by the user, no changes needed
+      res.json(memory); 
     }
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
